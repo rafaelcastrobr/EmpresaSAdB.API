@@ -24,9 +24,13 @@ namespace EmpresaSA.Controllers
         /// <summary>
         /// Busca todos departamentos ativos
         /// </summary>
-        /// <response code="200">Retorna todos departamentos ativos no banco</response>
+        /// <param name="buscaDepartamento">Campo de busca de nome ou Id</param>
+        /// <returns>Retorna todos departamentos ativos no banco</returns>
+        /// <response code="200">Sucesso</response>
         /// <response code="404">Não encontrado</response>
         [HttpGet("buscar-departamentos-ativos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult BuscarDepartamentosAtivos(string? buscaDepartamento)
         {
             var departamentosAtivos = _context.Departamento.Where(d => d.Status == StatusEnum.Ativo);
@@ -55,8 +59,12 @@ namespace EmpresaSA.Controllers
         /// <summary>
         /// Busca todos departamentos inativos
         /// </summary>
-        /// <response code="200">Retorna todos departamentos inativos no banco</response>
+        /// <param name="buscaDepartamento">Campo de busca de nome ou Id</param>
+        /// <returns>Retorna todos departamentos inativos no banco</returns>
+        /// <response code="200">Sucesso</response>
         /// <response code="404">Não encontrado</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("buscar-departamentos-inativos")]
         public IActionResult BuscarDepartamentosInativos(string? buscaDepartamento)
         {
@@ -87,9 +95,13 @@ namespace EmpresaSA.Controllers
         /// <summary>
         /// Busca departament por id
         /// </summary>
-        /// <response code="200">Retorna o item</response>
+        /// <param name="id">Identificador do departamento</param>
+        /// <returns>Retorna o departamento específico</returns>
+        /// <response code="200">Sucesso</response>
         /// <response code="404">Não encontrado</response>
         [HttpGet("buscar-departamento/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult BuscarDepartamentoPorId(Guid id)
         {
             var departamento = _context.Departamento
@@ -108,9 +120,13 @@ namespace EmpresaSA.Controllers
         /// <summary>
         /// Cria um novo departamento
         /// </summary>
-        /// <response code="201">Cadastrado com sucesso</response>
+        /// <param name="departamento">Objeto de criação do departamento</param>
+        /// <returns>Objeto criado</returns>
+        /// <response code="201">Sucesso</response>
         /// <response code="400">Item requerido não inserido</response>
         [HttpPost("criar-departamento")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult CriarDepartamento(DepartamentoEntitie departamento)
         {
 
@@ -125,9 +141,13 @@ namespace EmpresaSA.Controllers
         /// <summary>
         /// Atualiza um departamento ativo
         /// </summary>
-        /// <response code="204">Atualizado com sucesso</response>
+        /// <param name="id">Identificador do departamento</param>
+        /// <param name="input">Dados do departamento</param>
+        /// <response code="204">Sucesso</response>
         /// <response code="400">Item requerido não inserido</response>
         [HttpPut("atualizar-departamento/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult AtualizarDepartamento(Guid id, DepartamentoEntitie input)
         {
             var departamento = _context.Departamento.SingleOrDefault(d => d.Id == id && d.Status == StatusEnum.Ativo);
@@ -146,12 +166,18 @@ namespace EmpresaSA.Controllers
         }
 
 
+
+
         /// <summary>
         /// Ativa um departamento inativo
         /// </summary>
-        /// <response code="204">Ativado com sucesso</response>
+        /// <param name="id">Identificador do departamento</param>
+        /// <returns>Nada.</returns>
+        /// <response code="204">Sucesso</response>
         /// <response code="404">Item não encontrado</response>
         [HttpPatch("ativar-departamento/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AtivarDepartamento(Guid id)
         {
             var departamento = _context.Departamento.SingleOrDefault(d => d.Id == id && d.Status == StatusEnum.Inativo);
@@ -171,9 +197,13 @@ namespace EmpresaSA.Controllers
         /// <summary>
         /// Inativa um departamento ativo
         /// </summary>
-        /// <response code="204">Inativado com sucesso</response>
+        /// <param name="id">Identificador do departamento</param>
+        /// <returns>Nada.</returns>
+        /// <response code="204">Sucesso</response>
         /// <response code="404">Item não encontrado</response>
         [HttpDelete("inativar-departamento/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult InativarDepartamento(Guid id)
         {
             var departamento = _context.Departamento
