@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace EmpresaSA.Controllers
 {
-    [Route("api/empresa")]
+    [Route("api/[controller]")]
     [ApiController]
     public class DepartamentoController : ControllerBase
     {
@@ -22,9 +22,9 @@ namespace EmpresaSA.Controllers
 
 
         /// <summary>
-        /// Busca todos departamentos ativos
+        /// Busca departamentos ativos
         /// </summary>
-        /// <param name="buscaDepartamento">Campo de busca de nome ou Id</param>
+        /// <param name="buscaDepartamento">Campo de busca de nome ou sigla</param>
         /// <returns>Retorna todos departamentos ativos no banco</returns>
         /// <response code="200">Sucesso</response>
         /// <response code="404">Não encontrado</response>
@@ -57,12 +57,12 @@ namespace EmpresaSA.Controllers
         }
 
         /// <summary>
-        /// Busca todos departamentos inativos
+        /// Busca departamentos inativos
         /// </summary>
-        /// <param name="buscaDepartamento">Campo de busca de nome ou Id</param>
+        /// <param name="buscaDepartamento">Campo de busca de nome ou sigla</param>
         /// <returns>Retorna todos departamentos inativos no banco</returns>
         /// <response code="200">Sucesso</response>
-        /// <response code="404">Não encontrado</response>
+        /// <response code="404">Departamento buscado não encontrado</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("buscar-departamentos-inativos")]
@@ -98,7 +98,7 @@ namespace EmpresaSA.Controllers
         /// <param name="id">Identificador do departamento</param>
         /// <returns>Retorna o departamento específico</returns>
         /// <response code="200">Sucesso</response>
-        /// <response code="404">Não encontrado</response>
+        /// <response code="404">Id do departamento inativo ou não encontrado</response>
         [HttpGet("buscar-departamento/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -110,7 +110,7 @@ namespace EmpresaSA.Controllers
 
             if (departamento == null)
             {
-                return NotFound("Não encontrado");
+                return NotFound();
             }
 
             return Ok(departamento);
@@ -145,16 +145,18 @@ namespace EmpresaSA.Controllers
         /// <param name="input">Dados do departamento</param>
         /// <response code="204">Sucesso</response>
         /// <response code="400">Item requerido não inserido</response>
+        /// <response code="404">Id do departamento inativo ou não encontrado</response>
         [HttpPut("atualizar-departamento/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AtualizarDepartamento(Guid id, DepartamentoEntitie input)
         {
             var departamento = _context.Departamento.SingleOrDefault(d => d.Id == id && d.Status == StatusEnum.Ativo);
 
             if (departamento == null)
             {
-                return NotFound("Não encontrado");
+                return NotFound();
             }
 
             departamento.Atualizar(input.Nome, input.Sigla);
@@ -165,34 +167,6 @@ namespace EmpresaSA.Controllers
             return NoContent();
         }
 
-
-
-
-        /// <summary>
-        /// Ativa um departamento inativo
-        /// </summary>
-        /// <param name="id">Identificador do departamento</param>
-        /// <returns>Nada.</returns>
-        /// <response code="204">Sucesso</response>
-        /// <response code="404">Item não encontrado</response>
-        [HttpPatch("ativar-departamento/{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult AtivarDepartamento(Guid id)
-        {
-            var departamento = _context.Departamento.SingleOrDefault(d => d.Id == id && d.Status == StatusEnum.Inativo);
-
-            if (departamento == null)
-            {
-                return NotFound("Não encontrado");
-            }
-
-            departamento.Ativar();
-            _context.SaveChanges();
-
-            return NoContent();
-
-        }
 
         /// <summary>
         /// Inativa um departamento ativo
