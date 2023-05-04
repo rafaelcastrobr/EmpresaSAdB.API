@@ -129,6 +129,11 @@ namespace EmpresaSA.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult CriarDepartamento(DepartamentoEntitie departamento)
         {
+            var departamentoDb = _context.Departamento
+               .Where(d => d.Nome == departamento.Nome && d.Sigla == departamento.Sigla);
+
+            if (!departamentoDb.IsNullOrEmpty()) return BadRequest();
+
 
             _context.Departamento.Add(departamento);
 
